@@ -76,22 +76,28 @@ void do_block(int ix_min, int ix_max, int iy_min, int iy_max, _config c, int *im
     int ab = process_point(cx_min, cy_max, c.er, c.bailout);
     int ba = process_point(cx_max, cy_min, c.er, c.bailout);
 
-    if ( aa == bb  && aa == ab && aa == ba && check(ix_min, ix_max, iy_min, iy_max, c, 2, aa) ) {
+    int w = rand() % 2;
+
+    if ( w ) {
         fill_block(ix_min, ix_max, iy_min, iy_max, c, img, aa);
     } else {
-        if ( dx < eps && dy < eps ) {
+        if ( aa == bb  && aa == ab && aa == ba && check(ix_min, ix_max, iy_min, iy_max, c, 2, aa) ) {
             finish_block(ix_min , ix_max     , iy_min     , iy_max     , c, img);
-        } else if ( dy < eps ) {
-            do_block(ix_min     , ix_max - dx, iy_min     , iy_max     , c, img);
-            do_block(ix_min + dx, ix_max     , iy_min     , iy_max     , c, img);
-        } else if ( dx < eps ) {
-            do_block(ix_min     , ix_max     , iy_min     , iy_max - dy, c, img);
-            do_block(ix_min     , ix_max     , iy_min + dy, iy_max     , c, img);
         } else {
-            do_block(ix_min     , ix_max - dx, iy_min     , iy_max - dy, c, img);
-            do_block(ix_min + dx, ix_max     , iy_min + dy, iy_max     , c, img);
-            do_block(ix_min + dx, ix_max     , iy_min     , iy_max - dy, c, img);
-            do_block(ix_min     , ix_max - dx, iy_min + dy, iy_max     , c, img);
+            if ( dx < eps && dy < eps ) {
+                finish_block(ix_min , ix_max     , iy_min     , iy_max     , c, img);
+            } else if ( dy < eps ) {
+                do_block(ix_min     , ix_max - dx, iy_min     , iy_max     , c, img);
+                do_block(ix_min + dx, ix_max     , iy_min     , iy_max     , c, img);
+            } else if ( dx < eps ) {
+                do_block(ix_min     , ix_max     , iy_min     , iy_max - dy, c, img);
+                do_block(ix_min     , ix_max     , iy_min + dy, iy_max     , c, img);
+            } else {
+                do_block(ix_min     , ix_max - dx, iy_min     , iy_max - dy, c, img);
+                do_block(ix_min + dx, ix_max     , iy_min + dy, iy_max     , c, img);
+                do_block(ix_min + dx, ix_max     , iy_min     , iy_max - dy, c, img);
+                do_block(ix_min     , ix_max - dx, iy_min + dy, iy_max     , c, img);
+            }
         }
     }
 }
