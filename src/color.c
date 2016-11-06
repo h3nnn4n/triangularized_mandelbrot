@@ -14,8 +14,10 @@ void populatePal(_color *pallete){
     fgets(limbo, 255, pal);
     fgets(limbo, 255, pal);
     fgets(limbo, 255, pal);
+    fgets(limbo, 255, pal);
 
-    fscanf(pal, "%d\n", &size);
+    /*fscanf(pal, "%d\n", &size);*/
+    size = 255;
 
     if( size > 0 && pal != NULL ){
         for (i = 0; i < size; ++i) {
