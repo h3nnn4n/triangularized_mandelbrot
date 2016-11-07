@@ -30,8 +30,8 @@ int main(int argc, char *argv[]) {
     config.screenx  =  1920;
     config.screeny  =  1080;
 
-    /*config.screenx  =  800;*/
-    /*config.screeny  =  600;*/
+    config.screenx  =  800;
+    config.screeny  =  600;
 
     config.bailout  =  2500;
     config.er       =  2;
@@ -47,15 +47,15 @@ int main(int argc, char *argv[]) {
     config.miny     =  0.131825963  - 0.000014628;
     config.maxy     =  0.131825963  + 0.000014628;
 
-    config.minx     = -0.743643887037151 - 0.000000000051299 / 256.0;
-    config.maxx     = -0.743643887037151 + 0.000000000051299 / 256.0;
-    config.miny     =  0.131825904205330 - 0.000000000051299 / 256.0;
-    config.maxy     =  0.131825904205330 + 0.000000000051299 / 256.0;
+    /*config.minx     = -0.743643887037151 - 0.000000000051299 / 256.0;*/
+    /*config.maxx     = -0.743643887037151 + 0.000000000051299 / 256.0;*/
+    /*config.miny     =  0.131825904205330 - 0.000000000051299 / 256.0;*/
+    /*config.maxy     =  0.131825904205330 + 0.000000000051299 / 256.0;*/
 
-    config.minx     = -0.743643887037151 - 0.000000000051299 / 1024.0;
-    config.maxx     = -0.743643887037151 + 0.000000000051299 / 1024.0;
-    config.miny     =  0.131825904205330 - 0.000000000051299 / 1024.0;
-    config.maxy     =  0.131825904205330 + 0.000000000051299 / 1024.0;
+    /*config.minx     = -0.743643887037151 - 0.000000000051299 / 1024.0;*/
+    /*config.maxx     = -0.743643887037151 + 0.000000000051299 / 1024.0;*/
+    /*config.miny     =  0.131825904205330 - 0.000000000051299 / 1024.0;*/
+    /*config.maxy     =  0.131825904205330 + 0.000000000051299 / 1024.0;*/
 
     block_size      =  10;
 
@@ -86,6 +86,25 @@ int main(int argc, char *argv[]) {
         }
         fprintf(stderr," -- %.2f%%\n",((progress += bs)/((double)config.screenx))*100.0);
     }
+    progress = 0;
+
+    block_size = 3;
+#pragma omp parallel for private(i, j) shared(progress) schedule(_SCHELL_)
+    for (i = 0; i < config.screenx/block_size; ++i) {
+        for (j = 0; j < config.screeny/block_size; ++j) {
+            int x, y, dx, dy;
+            /*dx = 10 + rand()%5; //rand() % 20 - 10;*/
+            /*dy = 10 + rand()%5; //rand() % 20 - 10;*/
+            dx = rand() % 20 - 10;
+            dy = rand() % 20 - 10;
+            x  = rand() % (config.screenx - dx);
+            y  = rand() % (config.screeny - dy);
+            draw_line(x, x + dx, y, y + dy, config, escapetime);
+        }
+            fprintf(stderr," -- %.2f%%\n",((progress++)/((double)config.screenx/block_size))*100.0);
+    }
+
+    /*draw_line(0, config.screenx, 0, config.screeny, config, escapetime);*/
 
 /*#pragma omp parallel for private(ix) schedule(_SCHELL_)*/
     /*for (i = 0; i < config.screenx/block_size; ++i) {*/
@@ -124,15 +143,18 @@ int main(int argc, char *argv[]) {
 
    for ( iy = 0; iy < config.screeny; iy++ ) {
         for ( ix = 0; ix < config.screenx; ix++ ) {
-            /*if ( escapetime[iy * config.screenx + ix] == 0 ) {*/
+            if ( escapetime[iy * config.screenx + ix] == 0 ) {
 
-            /*} else {*/
-                /*bitmap[iy * config.screenx + ix] = getPalMem(hist[escapetime[iy * config.screenx + ix]]/(double)total, pal);*/
-            /*}*/
+            } else {
+                /*bitmap[iy * config.screenx + ix].r = 255;*/
+                /*bitmap[iy * config.screenx + ix].g = 255;*/
+                /*bitmap[iy * config.screenx + ix].b = 255;*/
+                bitmap[iy * config.screenx + ix] = getPalMem(hist[escapetime[iy * config.screenx + ix]]/(double)total, pal);
+            }
 
-            bitmap[iy * config.screenx + ix].r = (int)((escapetime[iy * config.screenx + ix] / (double)max) * 255.0);
-            bitmap[iy * config.screenx + ix].g = (int)((escapetime[iy * config.screenx + ix] / (double)max) * 255.0);
-            bitmap[iy * config.screenx + ix].b = (int)((escapetime[iy * config.screenx + ix] / (double)max) * 255.0);
+            /*bitmap[iy * config.screenx + ix].r = (int)((escapetime[iy * config.screenx + ix] / (double)max) * 255.0);*/
+            /*bitmap[iy * config.screenx + ix].g = (int)((escapetime[iy * config.screenx + ix] / (double)max) * 255.0);*/
+            /*bitmap[iy * config.screenx + ix].b = (int)((escapetime[iy * config.screenx + ix] / (double)max) * 255.0);*/
 
             /*bitmap[iy * config.screenx + ix].r = escapetime[iy * config.screenx + ix];*/
             /*bitmap[iy * config.screenx + ix].g = escapetime[iy * config.screenx + ix];*/

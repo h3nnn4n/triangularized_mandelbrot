@@ -1,3 +1,6 @@
+#include <math.h>
+#include <stdlib.h>
+
 #include "types.h"
 #include "mandel.h"
 #include "mandel_processor.h"
@@ -76,7 +79,7 @@ void do_block(int ix_min, int ix_max, int iy_min, int iy_max, _config c, int *im
     int ab = process_point(cx_min, cy_max, c.er, c.bailout);
     int ba = process_point(cx_max, cy_min, c.er, c.bailout);
 
-    int w = rand() % 2;
+    int w =  1 + rand() % 2;
 
     if ( w ) {
         fill_block(ix_min, ix_max, iy_min, iy_max, c, img, aa);
@@ -99,5 +102,33 @@ void do_block(int ix_min, int ix_max, int iy_min, int iy_max, _config c, int *im
                 do_block(ix_min     , ix_max - dx, iy_min + dy, iy_max     , c, img);
             }
         }
+    }
+}
+
+void draw_line(int ix_min, int ix_max, int iy_min, int iy_max, _config c, int *img) {
+    double dx = (ix_max - ix_min);
+    double dy = (iy_max - iy_min);
+    /*int step = abs(dx) > abs(dy) ? ceil(abs(dx)) : ceil(abs(dy));*/
+    int step = sqrt(dx*dx + dy*dy) + 1;
+    int i;
+
+    dx /= step;
+    dy /= step;
+
+    /*printf("%d\n", step);*/
+
+    for (i = 0; i <= step; ++i) {
+        int x = ix_min + i * dx;
+        int y = iy_min + i * dy;
+
+        double cx = c.minx + x * (c.maxx - c.minx) / c.screenx;
+        double cy = c.miny + y * (c.maxy - c.miny) / c.screeny;
+
+        /*printf("%d %d %f %f %d \n", x, y, cx, cy, process_point(cx, cy, c.er, c.bailout));*/
+
+        if ( x >= c.screenx || x < 0 ) { continue; }
+        if ( y >= c.screeny || y < 0 ) { continue; }
+
+        img[ y * c.screenx + x ] = process_point(cx, cy, c.er, c.bailout);
     }
 }
